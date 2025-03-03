@@ -1,5 +1,7 @@
 import { getLastDate, getMonthWeekDay } from "@/utils/date-utils";
 import Cell from "./Cell";
+import CalendarHeader from "./CalendarHeader";
+import ContextMenu from "../common/ContextMenu";
 
 interface CalendarProps {
   year: number;
@@ -31,6 +33,7 @@ const Calendar = ({ year, month }: CalendarProps) => {
 
   return (
     <div className="calendar flex flex-col h-dvh">
+      <CalendarHeader year={year} month={month} />
       <div className="grid grid-cols-7">
         {
           ['일', '월', '화', '수', '목', '금', '토'].map((day) => (
@@ -44,8 +47,7 @@ const Calendar = ({ year, month }: CalendarProps) => {
         ).map((date) => (
           <Cell 
             key={date.getTime()} 
-            date={date.getDate()} 
-            day={date.getDay()} 
+            date={date} 
             current={false}
           />
         ))}
@@ -55,8 +57,7 @@ const Calendar = ({ year, month }: CalendarProps) => {
         ).map((date) => (
           <Cell 
             key={date.getTime()} 
-            date={date.getDate()} 
-            day={date.getDay()} 
+            date={date} 
           />
         ))}
 
@@ -65,12 +66,13 @@ const Calendar = ({ year, month }: CalendarProps) => {
         ).map((date) => (
           <Cell 
             key={date.getTime()} 
-            date={date.getDate()} 
-            day={date.getDay()} 
+            date={date} 
             current={false}
           />
         ))}
       </div>
+
+      <ContextMenu />
     </div>
   )
 };

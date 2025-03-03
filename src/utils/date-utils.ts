@@ -10,3 +10,7 @@ export const getMonthWeekDay = (date: Date): [number, number] => {
 export const getLastDate = (date: Date): number => {
   return new Date(date.getFullYear(), date.getMonth(), 0).getDate();
 }
+
+export const formatDate = (date: Date): string => {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}

@@ -1,26 +1,41 @@
+import { useCell } from "@/hooks/useDate";
+
 interface CellProps {
-  date: number;
-  day: number;
+  date: Date;
   current?: boolean;
 }
 
-const Cell = ({ date, day, current = true }: CellProps) => {
+const Cell = ({ date, current = true }: CellProps) => {
+  const { 
+    checked, 
+    handleMouseDown, 
+    handleMouseMove, 
+    handleMouseUp
+  } = useCell(date);  
+  
+  const day = date.getDay();
   let color = '';
 
-  if (!day) {
-    color = 'text-red-500';
-  }
-
-  if (day === 6) {
-    color = 'text-blue-500';
+  switch (day) {
+    case 0:
+      color = 'text-red-500';
+      break;
+    case 6:
+      color = 'text-blue-500';
+      break;
+    default:
+      color = 'text-gray-500';
   }
 
   return (
     <div 
-      className={`aspect-auto text-center pt-2 text-sm ${color} border-b-[1px] border-b-gray-200`}
+      className={`aspect-auto text-center pt-2 text-sm ${color} border-b-[1px] border-b-gray-200 transition-all select-none ${checked ? 'bg-blue-100' : ''}`}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
     >
       <span className={`${!current ? 'opacity-40' : ''}`}>
-        {date}
+        {date.getDate()}
       </span>
     </div>
   );
