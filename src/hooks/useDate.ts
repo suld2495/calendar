@@ -1,43 +1,43 @@
 import { useContextmenuStore } from "@/store/contextmenu";
+import { useTodoStore } from "@/store/todo";
 
 export const useCell = (date: Date) => {
+  const { isMouseDown, showContextmenu, setIsMouseDown } =
+    useContextmenuStore();
   const {
-    startDate,
-    endDate,
-    isMouseDown,
-    showContextmenu,
-    setStartDate,
-    setEndDate
-  } = useContextmenuStore();
+    form: { startDate, endDate },
+    changeForm,
+  } = useTodoStore();
 
   let checked = false;
 
-  if (startDate && endDate && isMouseDown) {
+  if (startDate && endDate) {
     const start = startDate > endDate ? endDate : startDate;
     const end = startDate > endDate ? startDate : endDate;
-    checked = date >= start && date <= end;
+    checked = date >= new Date(start) && date <= new Date(end);
   }
 
   const handleMouseDown = () => {
-    setStartDate(date);
-    setEndDate(date);
+    changeForm("startDate", date);
+    changeForm("endDate", date);
+    setIsMouseDown(true);
   };
 
   const handleMouseMove = () => {
     if (!isMouseDown) return;
 
-    setEndDate(date);
-  }
+    changeForm("endDate", date);
+  };
 
   const handleMouseUp = (e: React.MouseEvent) => {
     showContextmenu(e.clientX, e.clientY);
-    setEndDate(date);
-  }
+    changeForm("endDate", date);
+  };
 
   return {
     checked,
     handleMouseDown,
     handleMouseMove,
-    handleMouseUp
-  }
+    handleMouseUp,
+  };
 };

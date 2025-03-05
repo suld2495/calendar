@@ -1,4 +1,5 @@
-import { create } from "zustand"
+import { create } from "zustand";
+import { useTodoStore } from "./todo";
 
 interface State {
   isModal: boolean;
@@ -11,11 +12,11 @@ interface Action {
 
 const init: State = {
   isModal: false,
-}
+};
 
-export const useModalStore = create<State & Action>()((set) => ({
+export const useModalStore = create<State & Action>()((set, get) => ({
   ...init,
 
   showModal: () => set({ isModal: true }),
-  hideModal: () => set({ isModal: false }),
-}))
+  hideModal: () => set(() => ({ isModal: false })),
+}));
