@@ -1,4 +1,4 @@
-import { useDateStore } from "@/store/date";
+import useCalendarStore from "@/store";
 
 interface MonthButtonProps {
   children: React.ReactNode;
@@ -22,7 +22,19 @@ const MonthButton = ({ onClick, children }: MonthButtonProps) => {
 };
 
 const CalendarHeader = () => {
-  const { year, month, setToday, prev, next } = useDateStore();
+  const [ 
+    year, 
+    month, 
+    setToday, 
+    prev, 
+    next
+  ] = useCalendarStore((state) => [
+    state.year, 
+    state.month, 
+    state.setToday, 
+    state.prev, 
+    state.next
+  ]);
 
   return (
     <div className="calendar-header flex items-center gap-10 py-10 pl-5">

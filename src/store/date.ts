@@ -1,26 +1,15 @@
-import { create } from "zustand"
+import { StateCreator } from "zustand"
+import { CalendarSlice, DateSlice } from "./type";
 
-interface State {
-  year: number;
-  month: number;
-}
-
-interface Action {
-  setYear: (year: number) => void;
-  setMonth: (month: number) => void;
-  setYearMonth: (year: number, month: number) => void;
-  prev: () => void;
-  next: () => void;
-  setToday: () => void;
-}
-
-const init: State = {
+export const createDateSlice: StateCreator<
+  CalendarSlice,
+  [],
+  [],
+  DateSlice
+> = (set) => ({
   year: new Date().getFullYear(),
   month: new Date().getMonth(),
-}
 
-export const useDateStore = create<State & Action>()((set) => ({
-  ...init,
   setYear: (year: number) => set({ year }),
   setMonth: (month: number) => set({ month }),
   setYearMonth: (year: number, month: number) => set({ year, month }),
@@ -41,5 +30,5 @@ export const useDateStore = create<State & Action>()((set) => ({
     }
   })),
 
-  setToday: () => set({ year: new Date().getFullYear(), month: new Date().getMonth() + 1 }),
-}))
+  setToday: () => set({ year: new Date().getFullYear(), month: new Date().getMonth() }),
+});

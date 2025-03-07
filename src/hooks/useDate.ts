@@ -1,14 +1,21 @@
-import { useContextmenuStore } from "@/store/contextmenu";
+import useCalendarStore from "@/store";
 
 export const useCell = (date: Date) => {
-  const {
+  const [
     startDate,
     endDate,
     isMouseDown,
     showContextmenu,
     setStartDate,
     setEndDate
-  } = useContextmenuStore();
+  ] = useCalendarStore((state) => [
+    state.startDate,
+    state.endDate,
+    state.isMouseDown,
+    state.showContextmenu,
+    state.setStartDate,
+    state.setEndDate
+  ]);
 
   let checked = false;
 

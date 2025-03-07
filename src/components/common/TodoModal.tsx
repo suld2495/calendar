@@ -1,12 +1,20 @@
-import { useContextmenuStore } from "@/store/contextmenu";
-import { useModalStore } from "@/store/modal";
+import useCalendarStore from "@/store";
 import { formatDate } from "@/utils/date-utils";
 import { useEffect, useRef } from "react";
 
 const TodoModal = () => {
   const ref = useRef<HTMLInputElement>(null);
-  const { isModal, hideModal } = useModalStore();
-  const { startDate, endDate } = useContextmenuStore();
+  const [ 
+    startDate, 
+    endDate, 
+    isModal, 
+    hideModal
+  ] = useCalendarStore((state) => [
+    state.startDate, 
+    state.endDate, 
+    state.isModal, 
+    state.hideModal
+  ]);
 
   useEffect(() => {
     if (!ref.current || !isModal) return;

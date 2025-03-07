@@ -1,30 +1,11 @@
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { StateCreator } from "zustand"
+import { CalendarSlice, TodoSlice } from "./type";
 
-interface Todo {
-  id: number;
-  title: string;
-  startDate: string;
-  endDate: string;
-}
-
-interface State {
-  todos: Todo[];
-}
-
-interface Action {
-
-}
-
-const init: State = {
+export const createTodoSlice: StateCreator<
+  CalendarSlice,
+  [],
+  [],
+  TodoSlice
+> = (set) => ({
   todos: [],
-}
-
-export const useTodoStore = create<State & Action>()(
-  persist(
-    (set) => ({
-      ...init,
-    }),
-    { name: 'todoStore' }
-  )
-)
+});

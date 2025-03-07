@@ -1,21 +1,14 @@
-import { create } from "zustand"
+import { StateCreator } from "zustand"
+import { CalendarSlice, ModalSlice } from "./type";
 
-interface State {
-  isModal: boolean;
-}
-
-interface Action {
-  showModal: () => void;
-  hideModal: () => void;
-}
-
-const init: State = {
+export const createModalSlice: StateCreator<
+  CalendarSlice,
+  [],
+  [],
+  ModalSlice
+> = (set) => ({
   isModal: false,
-}
-
-export const useModalStore = create<State & Action>()((set) => ({
-  ...init,
 
   showModal: () => set({ isModal: true }),
   hideModal: () => set({ isModal: false }),
-}))
+});

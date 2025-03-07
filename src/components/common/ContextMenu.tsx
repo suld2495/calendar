@@ -1,9 +1,17 @@
-import { useContextmenuStore } from "@/store/contextmenu";
-import { useModalStore } from "@/store/modal";
+import useCalendarStore from "@/store";
 
 const ContextMenu = () => {
-  const { contextmenu, position, hideContextmenu } = useContextmenuStore();
-  const { showModal } = useModalStore();
+  const [ 
+    contextmenu, 
+    position, 
+    hideContextmenu, 
+    showModal 
+  ] = useCalendarStore((state) => ([
+    state.contextmenu,
+    state.position,
+    state.hideContextmenu,
+    state.showModal,
+  ]));
 
   if (!contextmenu) return null;
 

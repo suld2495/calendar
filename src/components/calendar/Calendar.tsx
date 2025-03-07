@@ -33,7 +33,7 @@ const Calendar = ({ year, month }: CalendarProps) => {
 
   return (
     <div className="calendar flex flex-col h-dvh">
-      <CalendarHeader year={year} month={month} />
+      <CalendarHeader />
       <div className="grid grid-cols-7">
         {
           ['일', '월', '화', '수', '목', '금', '토'].map((day) => (
@@ -43,7 +43,7 @@ const Calendar = ({ year, month }: CalendarProps) => {
       </div>
       <div className="grid grid-cols-7 flex-1">
         {Array.from({ length: firstWeekDay }, 
-          (_, i) => new Date(year, month - 1, 1 - firstWeekDay + i)
+          (_, i) => new Date(year, month, 1 - firstWeekDay + i)
         ).map((date) => (
           <Cell 
             key={date.getTime()} 
@@ -53,7 +53,7 @@ const Calendar = ({ year, month }: CalendarProps) => {
         ))}
 
         {Array.from({ length: lastDate }, 
-          (_, i) => new Date(year, month - 1, i + 1)
+          (_, i) => new Date(year, month, i + 1)
         ).map((date) => (
           <Cell 
             key={date.getTime()} 

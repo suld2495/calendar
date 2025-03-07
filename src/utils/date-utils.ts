@@ -8,7 +8,7 @@ export const getMonthWeekDay = (date: Date): [number, number] => {
 };
 
 export const getLastDate = (date: Date): number => {
-  return new Date(date.getFullYear(), date.getMonth(), 0).getDate();
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
 
 export const formatDate = (date: Date): string => {
