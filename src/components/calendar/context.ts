@@ -32,13 +32,7 @@ export interface CellContextProps {
   onDragging?: (date: Date) => void;
   onDragend?: (date: Date) => void;
 
-  setClassName: React.Dispatch<React.SetStateAction<CellContextProps['className']>>;
-  setVariant: React.Dispatch<React.SetStateAction<CellContextProps['variant']>>;
-  setActiveDate: React.Dispatch<React.SetStateAction<CellContextProps['activeDate']>>;
-
-  setOnClick: React.Dispatch<React.SetStateAction<CellContextProps['onClick']>>;
-  setOnDragging: React.Dispatch<React.SetStateAction<CellContextProps['onDragging']>>;
-  setOnDragend: React.Dispatch<React.SetStateAction<CellContextProps['onDragend']>>;
+  setCellOption: (option: Pick<CellContextProps, 'className' | 'variant' | 'activeDate' | 'onClick' | 'onDragging' | 'onDragend'>) => void;
 }
 
 export const CellContext = createContext<CellContextProps>({
@@ -46,11 +40,5 @@ export const CellContext = createContext<CellContextProps>({
   onDragging: () => { },
   onDragend: () => { },
 
-  setClassName: () => { },
-  setVariant: () => { },
-  setActiveDate: () => { },
-
-  setOnClick: () => { },
-  setOnDragging: () => { },
-  setOnDragend: () => { },
+  setCellOption: () => { },
 });

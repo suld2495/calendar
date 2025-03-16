@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { CELL_VARIANTS, CellContext } from "./context";
 
 interface CalendarCellProps {
@@ -11,14 +11,18 @@ interface CalendarCellProps {
 }
 
 const CalendarCell = ({ className, variant, activeDate, onClick, onDragging, onDragend } : CalendarCellProps) => {
-  const { setClassName, setVariant, setActiveDate, setOnClick, setOnDragging, setOnDragend } = useContext(CellContext);
+  const { setCellOption } = useContext(CellContext);
 
-  setClassName(className);
-  setVariant(variant);
-  setActiveDate(activeDate);
-  setOnClick(() => onClick);
-  setOnDragging(() => onDragging);
-  setOnDragend(() => onDragend);
+  useEffect(() => {
+    setCellOption({
+      className,
+      variant,
+      activeDate,
+      onClick,
+      onDragging,
+      onDragend,
+    });
+  }, [activeDate, className, onClick, onDragend, onDragging, setCellOption, variant]);
 
   return null;
 };

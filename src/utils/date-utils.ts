@@ -27,3 +27,8 @@ export const getToday = (): Date => {
   const today = new Date();
   return new Date(today.getFullYear(), today.getMonth(), today.getDate());
 }
+
+export const getDate = (date: string): Date => {
+  const temp = new Date(date);
+  return new Date(temp.getFullYear(), temp.getMonth(), temp.getDate());
+}

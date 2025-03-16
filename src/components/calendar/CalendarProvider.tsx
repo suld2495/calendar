@@ -49,9 +49,18 @@ export const CellProvider = ({ children }: CellProviderProps) => {
   const [onDragging, setOnDragging] = useState<CellContextProps['onDragging']>();
   const [onDragend, setOnDragend] = useState<CellContextProps['onDragend']>();
 
+  const setCellOption = useCallback((option: Pick<CellContextProps, 'className' | 'variant' | 'activeDate' | 'onClick' | 'onDragging' | 'onDragend'>) => {
+    setClassName(option.className);
+    setVariant(option.variant);
+    setActiveDate(option.activeDate);
+    setOnClick(() => option.onClick);
+    setOnDragging(() => option.onDragging);
+    setOnDragend(() => option.onDragend);
+  }, []);
+
   const value = useMemo(() => ({
-    className, variant, activeDate, onClick, onDragging, onDragend, setOnClick, setOnDragging, setOnDragend, setClassName, setVariant, setActiveDate
-  }), [className, variant, activeDate, onClick, onDragging, onDragend]);
+    className, variant, activeDate, onClick, onDragging, onDragend, setCellOption
+  }), [className, variant, activeDate, onClick, onDragging, onDragend, setCellOption]);
 
   return (
     <CellContext.Provider value={value}>
