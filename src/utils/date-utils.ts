@@ -12,5 +12,18 @@ export const getLastDate = (date: Date): number => {
 }
 
 export const formatDate = (date: Date): string => {
+  if (!date) return '';
+
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+export const displayFormatDate = (date: Date): string => {
+  if (!date) return '';
+
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+
+export const getToday = (): Date => {
+  const today = new Date();
+  return new Date(today.getFullYear(), today.getMonth(), today.getDate());
 }

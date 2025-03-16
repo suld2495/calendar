@@ -37,7 +37,22 @@ export const useCell = (date: Date) => {
   }
 
   const handleMouseUp = (e: React.MouseEvent) => {
-    showContextmenu(e.clientX, e.clientY);
+    const [width, height] = [200, 72];
+    const { outerWidth, innerHeight } = window;
+    const position = {
+      x: e.clientX,
+      y: e.clientY
+    }
+
+    if (outerWidth < e.clientX + width) {
+      position.x -= width;
+    }
+
+    if (innerHeight < e.clientY + height) {
+      position.y -= height;
+    }
+
+    showContextmenu(position.x, position.y);
     setEndDate(date);
   }
 

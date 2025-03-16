@@ -31,16 +31,4 @@ export interface ModalSlice {
   hideModal: () => void;
 }
 
-
-interface Todo {
-  id: number;
-  title: string;
-  startDate: string;
-  endDate: string;
-}
-
-export interface TodoSlice {
-  todos: Todo[];
-}
-
-export type CalendarSlice = ContextMenuSlice & DateSlice & ModalSlice & TodoSlice;
+export type CalendarSlice = ContextMenuSlice & DateSlice & ModalSlice;

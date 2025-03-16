@@ -1,16 +1,16 @@
 import './App.css'
-import Calendar from './components/calendar/Calendar'
 import TodoModal from './components/common/TodoModal';
+import FullCalendar from './components/custom/full-calendar/FullCalendar';
 import useCalendarStore from './store';
 
 function App() {
-  const [ year, month ] = useCalendarStore((state) => [state.year, state.month]);
+  const isModal = useCalendarStore((state) => state.isModal);
 
   return (
-    <>
-      <Calendar year={year} month={month} />
-      <TodoModal />
-    </>
+    <div className='bg-[#262626] h-full flex flex-col'>
+      <FullCalendar />
+      {isModal && <TodoModal />}
+    </div>
   )
 }
 

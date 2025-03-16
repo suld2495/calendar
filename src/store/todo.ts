@@ -1,11 +1,48 @@
-import { StateCreator } from "zustand"
-import { CalendarSlice, TodoSlice } from "./type";
+import { create } from "zustand"
+import { persist } from "zustand/middleware"
 
-export const createTodoSlice: StateCreator<
-  CalendarSlice,
-  [],
-  [],
-  TodoSlice
-> = (set) => ({
+interface Todo {
+  id: number;
+  title: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface TodoForm {
+  title: string;
+  startDate: string;
+  endDate: string;
+}
+
+interface State {
+  todos: Todo[];
+}
+
+interface Action {
+  saveTodo: (todo: TodoForm) => void;
+}
+
+const init: State = {
   todos: [],
-});
+}
+
+export const useTodoStore = create<State & Action>()(
+  persist(
+    (set) => ({
+      ...init,
+
+      saveTodo: (todo) => set((state) => {
+        return {
+          todos: [
+            ...state.todos,
+            {
+              id: (state.todos.at(-1)?.id || 0) + 1,
+              ...todo,
+            }
+          ]
+        };
+      })
+    }),
+    { name: 'todoStore' }
+  )
+)
