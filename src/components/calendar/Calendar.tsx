@@ -2,6 +2,7 @@ import CalendarContainer from "./CalendarContainer";
 import { CalendarProvider, CellProvider } from "./CalendarProvider";
 
 interface CalendarProps {
+  ref: React.RefObject<HTMLDivElement | null>;
   className?: string;
   style?: Record<string, string>;
   year?: number;
@@ -10,7 +11,8 @@ interface CalendarProps {
   children?: React.ReactNode;
 }
 
-const Calendar = ({ 
+const Calendar = ({
+  ref,
   className, 
   style, 
   year, 
@@ -26,6 +28,7 @@ const Calendar = ({
     <CalendarProvider>
       <CellProvider>
         <CalendarContainer
+          ref={ref}
           className={className} 
           year={year} 
           month={month} 

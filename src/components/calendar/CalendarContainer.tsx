@@ -20,6 +20,7 @@ const Day = ({ day }: { day: string }) => {
 }
 
 interface CalendarProps {
+  ref: React.RefObject<HTMLDivElement | null>;
   className?: string;
   cellClassName?: string;
   style?: Record<string, string>;
@@ -29,6 +30,7 @@ interface CalendarProps {
 }
 
 const CalendarContainer = ({ 
+  ref,
   className, 
   style, 
   year, 
@@ -64,7 +66,7 @@ const CalendarContainer = ({
           ))
         }
       </div>
-      <div className="grid grid-cols-7 flex-1">
+      <div ref={ref} className="grid grid-cols-7 flex-1">
         {dates.map((date, index) => cell 
           ? cell(date, isCurrent(index)) 
           : <Cell key={date.getTime()} date={date} current={isCurrent(index)} />)}

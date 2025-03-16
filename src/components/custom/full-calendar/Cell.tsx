@@ -2,11 +2,12 @@ import { useCell } from "@/hooks/useDate";
 import { getToday } from "@/utils/date-utils";
 
 interface CellProps {
+  ref: React.RefObject<HTMLDivElement | null>;
   date: Date;
   current?: boolean;
 }
 
-const Cell = ({ date, current = true }: CellProps) => {
+const Cell = ({ ref, date, current = true }: CellProps) => {
   const { 
     checked, 
     handleMouseDown, 
@@ -37,6 +38,7 @@ const Cell = ({ date, current = true }: CellProps) => {
 
   return (
     <div 
+      ref={ref}
       className={`aspect-auto text-white text-center pt-2 ${color} border-b-[1px] border-b-[#303030] border-r-[1px] border-r-[#303030] transition-all select-none ${checked ? 'bg-[#413029]' : ''}`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
