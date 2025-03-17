@@ -18,31 +18,86 @@ const Todo = ({
   startDate,
   endDate,
   cells,
+  title,
 }: TodoProps) => {
+  const [active, setActive] = useState(false);
+  const [year, month] = useCalendarStore((state) => [
+    state.year,
+    state.month,
+  ]);
+
   if (!itemWidth || !itemHeight) return;
 
-  const start = new Date(startDate);
-  const date = start.getDate();
-  const day = start.getDay();
-  const value = Math.ceil(date / 7);
-  const rest = date % 7; 
-  const rows = value + (day + 1) < rest ? 1 : 0;
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const monthStart = new Date(year, month, -firstDay.getDay() + 1);
+  const monthEnd = new Date(year, month + 1, 0 + (6 - lastDay.getDay()));
 
-  start.setDate(1);
-  const first = start.getDay() - 1;
-  const last = first + new Date(endDate).getDate();
-  const max = Math.max(0, ...cells.current.slice(first, last));
+  let weekStart: Date;
+  let weekEnd: Date;
 
-  for (let i = first; i < last; i += 1) {
-    cells.current[i] = (cells.current[i] || 0) + 1;
-  }
+  const list = [];
+  let count = 0;
+
+  do {
+    const result = {
+      start: -1,
+      end: -1,
+      max: 0,
+    };
+
+    weekStart = new Date(monthStart.getFullYear(), monthStart.getMonth(), monthStart.getDate() + 7 * count);;
+    weekEnd = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 6);
+
+    if (getDate(startDate).getTime() < weekStart.getTime()) {
+      result.start = 0;
+    } else if (getDate(startDate).getTime() <= weekEnd.getTime()) {
+      result.start = getDate(startDate).getDay();
+    }
+
+    if (weekEnd.getTime() < getDate(endDate).getTime()) {
+      result.end = 6;
+    } else if (weekStart.getTime() <= getDate(endDate).getTime()) {
+      result.end = getDate(endDate).getDay();
+    }
+
+    list.push(result);
+
+    const start = result.start + 7 * count;
+    const end = result.end + 7 * count;
+
+    for (let i = start; i < end; i += 1) {
+      cells.current[i] = (cells.current[i] || 0) + 1;
+    }
+
+    result.max = Math.max(0, ...cells.current.slice(start, end));
+
+    count += 1;
+  } while(weekEnd < monthEnd && weekStart.getTime() <= getDate(endDate).getTime());
+
+  const TodoGap = 27;
+  const TodoStartTop = 40;
 
   return (
-    <div className="absolute h-4 bg-red-500" style={{ 
-      top: top + itemHeight * rows + max * 20, 
-      width: itemWidth,
-    }}>
-    </div>
+    <>
+      {list
+        .filter(({ max }) => max)
+        .map(({ start, end, max }, index) => (
+          <div 
+            key={index}
+            className={`absolute h-5 bg-[#653c2b] rounded-sm ${active ? 'bg-[#ff7d44]' : ''}`}
+            style={{
+              top: top + TodoStartTop + itemHeight * index + (max - 1) * TodoGap,
+              left: start * itemWidth + 5,
+              width: (end - start + 1) * itemWidth - 20,
+            }}
+            onClick={() => setActive(true)}
+          >
+            {!index && <div className="absolute w-1 h-full rounded-l-sm bg-[#fe814a] cursor-col-resize" />}
+            <span className="flex h-full leading-2 text-white text-[10px] items-center pl-2 select-none">{title}</span>
+          </div>
+        ))}
+    </>
   )
 };
 
@@ -66,6 +121,10 @@ const Todos = ({ top = 0, itemWidth = 0, itemHeight = 0 }: TodosProps) => {
     })
     .toSorted((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
+  useEffect(() => {
+    cells.current = [];
+  });
+
   return (
     <div className="todos">
       {filteredTodos.map((todo) => (
@@ -82,4 +141,4 @@ const Todos = ({ top = 0, itemWidth = 0, itemHeight = 0 }: TodosProps) => {
   );
 };
 
-export default Todos;
+export default React.memo(Todos);
