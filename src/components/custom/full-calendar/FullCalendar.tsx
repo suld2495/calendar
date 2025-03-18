@@ -14,11 +14,23 @@ const FullCalendar = () => {
     state.month, 
   ]);
   const [item, setItem] = useState<{ width: number; height: number }>();
+  const [ 
+    hideContextmenu,
+    showModal,
+  ] = useCalendarStore((state) => ([
+    state.hideContextmenu,
+    state.showModal,
+  ]));
 
   useEffect(() => {
     if (!cellRef.current) return;
     setItem(cellRef.current.getBoundingClientRect());
   }, []);
+
+  const handleClick = () => {
+    hideContextmenu();
+    showModal();
+  };
 
   return (
     <>
@@ -42,7 +54,10 @@ const FullCalendar = () => {
         itemWidth={item?.width}
         itemHeight={item?.height}
       />
-      <ContextMenu />
+      
+      <ContextMenu>
+        <ContextMenu.Item onClick={handleClick} />
+      </ContextMenu>
     </>
   )
 };

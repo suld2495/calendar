@@ -8,6 +8,8 @@ interface TodoProps extends TodoType {
   itemWidth: number;
   itemHeight: number;
   cells: React.RefObject<number[]>;
+  activeId: number;
+  handleActive: (id: number) => void;
 }
 
 const Todo = ({ 
@@ -19,8 +21,9 @@ const Todo = ({
   endDate,
   cells,
   title,
+  activeId,
+  handleActive,
 }: TodoProps) => {
-  const [active, setActive] = useState(false);
   const [year, month] = useCalendarStore((state) => [
     state.year,
     state.month,
@@ -85,16 +88,16 @@ const Todo = ({
         .map(({ start, end, max }, index) => (
           <div 
             key={index}
-            className={`absolute h-5 bg-[#653c2b] rounded-sm ${active ? 'bg-[#ff7d44]' : ''}`}
+            className={`todo absolute h-5 bg-[#653c2b] rounded-sm ${activeId === id ? 'bg-[#ff7d44]' : ''}`}
             style={{
               top: top + TodoStartTop + itemHeight * index + (max - 1) * TodoGap,
               left: start * itemWidth + 5,
               width: (end - start + 1) * itemWidth - 20,
             }}
-            onClick={() => setActive(true)}
+            onClick={() => handleActive(id)}
           >
             {!index && <div className="absolute w-1 h-full rounded-l-sm bg-[#fe814a] cursor-col-resize" />}
-            <span className="flex h-full leading-2 text-white text-[10px] items-center pl-2 select-none">{title}</span>
+            <span className="todo flex h-full leading-2 text-white text-[10px] items-center pl-2 select-none">{title}</span>
           </div>
         ))}
     </>
@@ -109,6 +112,7 @@ interface TodosProps {
 
 const Todos = ({ top = 0, itemWidth = 0, itemHeight = 0 }: TodosProps) => {
   const cells = useRef([]);
+  const [activeId, setActiveId] = useState(-1);
   const [year, month] = useCalendarStore((state) => [
     state.year,
     state.month,
@@ -125,6 +129,20 @@ const Todos = ({ top = 0, itemWidth = 0, itemHeight = 0 }: TodosProps) => {
     cells.current = [];
   });
 
+  useEffect(() => {
+    const reset = (e: MouseEvent) => {
+      if ((e.target as HTMLDivElement).matches('.todo')) return;
+
+      setActiveId(-1);
+    };
+
+    document.addEventListener('click', reset);
+
+    return () => {
+      document.removeEventListener('click', reset);
+    };
+  }, []);
+
   return (
     <div className="todos">
       {filteredTodos.map((todo) => (
@@ -134,6 +152,8 @@ const Todos = ({ top = 0, itemWidth = 0, itemHeight = 0 }: TodosProps) => {
           itemWidth={itemWidth} 
           itemHeight={itemHeight} 
           cells={cells}
+          activeId={activeId}
+          handleActive={setActiveId}
           {...todo}
         />
       ))}
