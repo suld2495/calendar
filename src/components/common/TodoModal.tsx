@@ -81,6 +81,13 @@ const TodoModal = () => {
       return;
     }
 
+    if (activeDate!.type === 'endDate' && date < new Date(form.startDate)) {
+      setForm((prev) => ({
+        ...prev,
+        startDate: formatDate(date),
+      }));  
+    }
+
     setForm((prev) => ({
       ...prev,
       [activeDate!.type]: formatDate(date),
