@@ -4,9 +4,15 @@ import { displayFormatDate, formatDate } from "@/utils/date-utils";
 import { IconArrowRight, IconCalendarWeekFilled, IconSquareX } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import MiniCalendar from "../custom/mini-calendar/MiniCalendar";
+import { useShallow } from "zustand/shallow";
 
 const TodoModal = () => {
   const ref = useRef<HTMLInputElement>(null);
+  const [todo, clearForm, updateTodo] = useTodoStore(useShallow((state) => [
+    state.todo, 
+    state.clearForm,
+    state.updateTodo,
+  ]));
   const [ 
     startDate, 
     endDate, 
@@ -18,10 +24,11 @@ const TodoModal = () => {
     state.isModal, 
     state.hideModal,
   ]);
+
   const [form, setForm] = useState<TodoForm>({
-    title: '',
-    startDate: formatDate(startDate!),
-    endDate: formatDate(endDate!),
+    title: todo.title,
+    startDate: todo.startDate || formatDate(startDate!),
+    endDate: todo.endDate || formatDate(endDate!),
   });
   const [activeDate, setActiveDate] = useState<{ 
     type: 'startDate' | 'endDate', 
@@ -56,8 +63,16 @@ const TodoModal = () => {
       form.endDate = form.startDate;
     }
 
-    saveTodo(form);
-    hideModal();
+    if (todo.id) {
+      updateTodo({
+        ...form,
+        id: todo.id,
+      });
+    } else {
+      saveTodo(form);
+    }
+    
+    hide();
   };
 
   const handleClickDate = (date?: Date) => {
@@ -80,18 +95,23 @@ const TodoModal = () => {
     ref.current.focus();
   }, [ref, isModal]);
 
+  const hide = () => {
+    clearForm();
+    hideModal();
+  };
+
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
       <div
         className="absolute w-full h-full bg-[rgba(0,0,0,0.5)] backdrop-blur-xs"
-        onClick={hideModal}
+        onClick={hide}
       />
       <form
         className="relative w-lg rounded-3xl z-10 bg-white py-5 px-8"
         onSubmit={handleSubmit}
       >
         <div className="flex justify-end">
-          <button className="text-xl cursor-pointer" onClick={hideModal}>
+          <button className="text-xl cursor-pointer" onClick={hide}>
             <IconSquareX size={30} stroke={1} />
           </button>
         </div>
@@ -138,7 +158,7 @@ const TodoModal = () => {
         <div className="mt-8 flex justify-end gap-1">
           <button 
             className="py-[5px] px-[9px] border-[1px] border-gray-200 text-sm rounded-md cursor-pointer"
-            onClick={hideModal}
+            onClick={hide}
           >
             취소
           </button>

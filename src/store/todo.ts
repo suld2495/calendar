@@ -16,22 +16,31 @@ export interface TodoForm {
 
 interface State {
   todos: Todo[];
+  todo: Todo;
 }
 
 interface Action {
   saveTodo: (todo: TodoForm) => void;
   deleteTodo: (id: number) => void;
+  updateTodo: (todo: Todo) => void;
+  setForm: (todo: Todo) => void;
+  clearForm: () => void;
 }
 
 const init: State = {
   todos: [],
+  todo: {
+    id: 0,
+    title: '',
+    startDate: '',
+    endDate: '',
+  },
 }
 
 export const useTodoStore = create<State & Action>()(
   persist(
     (set) => ({
       ...init,
-
       saveTodo: (todo) => set((state) => {
         return {
           todos: [
@@ -43,11 +52,26 @@ export const useTodoStore = create<State & Action>()(
           ]
         };
       }),
+
+      updateTodo: (todo) => set((state) => {
+        const oldIndex = state.todos.findIndex((todo) => todo.id === todo.id);
+
+        return {
+          todos: state.todos.map((prev, index) => {
+            return index === oldIndex ? todo : prev;
+          })
+        }
+      }),
+
       deleteTodo: (id: number) => set((state) => {
         return {
           todos: state.todos.filter((todo) => todo.id !== id),
         };
       }),
+
+      setForm: (todo) => set({ todo }),
+
+      clearForm: () => set({ todo: init.todo }),
     }),
     { name: 'todoStore' }
   )

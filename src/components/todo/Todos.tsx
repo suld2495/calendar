@@ -3,6 +3,7 @@ import { Todo as TodoType, useTodoStore } from "@/store/todo";
 import { getDate } from "@/utils/date-utils";
 import React, { useEffect, useRef, useState } from "react";
 import ContextMenu from "../common/ContextMenu";
+import { useShallow } from "zustand/shallow";
 
 interface TodoProps extends TodoType {
   top: number;
@@ -25,12 +26,13 @@ const Todo = ({
   activeId,
   handleActive,
 }: TodoProps) => {
-  const deleteTodo = useTodoStore((state) => state.deleteTodo);
+  const [deleteTodo, setForm] = useTodoStore(useShallow((state) => [state.deleteTodo, state.setForm]));
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [year, month] = useCalendarStore((state) => [
+  const [year, month, showModal] = useCalendarStore((state) => [
     state.year,
     state.month,
+    state.showModal,
   ]);
 
   if (!itemWidth || !itemHeight) return;
@@ -85,6 +87,17 @@ const Todo = ({
     count += 1;
   } while(weekEnd < monthEnd && weekStart.getTime() <= getDate(endDate).getTime());
 
+  const handleClick = () => {
+    handleActive(-1)
+    setForm({
+      id,
+      title,
+      startDate,
+      endDate,
+    });
+    showModal();
+  };
+
   const TodoGap = 27;
   const TodoStartTop = 40;
 
@@ -121,6 +134,7 @@ const Todo = ({
         <ContextMenu.Item>
           <button 
             className="flex w-full items-center gap-4 font-semibold cursor-pointer"
+            onClick={handleClick}
           >
             <span className="block w-5 h-3 rounded-sm bg-blue-400" />수정
           </button>
