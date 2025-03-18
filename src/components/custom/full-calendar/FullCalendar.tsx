@@ -14,10 +14,14 @@ const FullCalendar = () => {
     state.month, 
   ]);
   const [item, setItem] = useState<{ width: number; height: number }>();
-  const [ 
+  const [
+    contextmenu, 
+    position, 
     hideContextmenu,
     showModal,
   ] = useCalendarStore((state) => ([
+    state.contextmenu,
+    state.position,
     state.hideContextmenu,
     state.showModal,
   ]));
@@ -55,8 +59,19 @@ const FullCalendar = () => {
         itemHeight={item?.height}
       />
       
-      <ContextMenu>
-        <ContextMenu.Item onClick={handleClick} />
+      <ContextMenu
+        isShow={contextmenu}
+        position={position}
+        close={hideContextmenu}
+      >
+        <ContextMenu.Item>
+          <button 
+            className="flex w-full items-center gap-4 font-semibold cursor-pointer"
+            onClick={handleClick}
+          >
+            <span className="block w-5 h-3 rounded-sm bg-red-400" />일정
+          </button>
+        </ContextMenu.Item>
       </ContextMenu>
     </>
   )

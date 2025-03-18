@@ -20,6 +20,7 @@ interface State {
 
 interface Action {
   saveTodo: (todo: TodoForm) => void;
+  deleteTodo: (id: number) => void;
 }
 
 const init: State = {
@@ -41,7 +42,12 @@ export const useTodoStore = create<State & Action>()(
             }
           ]
         };
-      })
+      }),
+      deleteTodo: (id: number) => set((state) => {
+        return {
+          todos: state.todos.filter((todo) => todo.id !== id),
+        };
+      }),
     }),
     { name: 'todoStore' }
   )

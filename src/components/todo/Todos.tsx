@@ -2,6 +2,7 @@ import useCalendarStore from "@/store";
 import { Todo as TodoType, useTodoStore } from "@/store/todo";
 import { getDate } from "@/utils/date-utils";
 import React, { useEffect, useRef, useState } from "react";
+import ContextMenu from "../common/ContextMenu";
 
 interface TodoProps extends TodoType {
   top: number;
@@ -24,6 +25,9 @@ const Todo = ({
   activeId,
   handleActive,
 }: TodoProps) => {
+  const deleteTodo = useTodoStore((state) => state.deleteTodo);
+  const ref = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [year, month] = useCalendarStore((state) => [
     state.year,
     state.month,
@@ -47,6 +51,7 @@ const Todo = ({
       start: -1,
       end: -1,
       max: 0,
+      count,
     };
 
     weekStart = new Date(monthStart.getFullYear(), monthStart.getMonth(), monthStart.getDate() + 7 * count);;
@@ -69,11 +74,13 @@ const Todo = ({
     const start = result.start + 7 * count;
     const end = result.end + 7 * count;
 
-    for (let i = start; i < end; i += 1) {
-      cells.current[i] = (cells.current[i] || 0) + 1;
+    if (result.start > -1 && result.end > -1) {
+      for (let i = start; i <= end; i += 1) {
+        cells.current[i] = (cells.current[i] || 0) + 1;
+      }
     }
 
-    result.max = Math.max(0, ...cells.current.slice(start, end));
+    result.max = Math.max(0, ...cells.current.slice(start, end + 1));
 
     count += 1;
   } while(weekEnd < monthEnd && weekStart.getTime() <= getDate(endDate).getTime());
@@ -84,22 +91,53 @@ const Todo = ({
   return (
     <>
       {list
-        .filter(({ max }) => max)
-        .map(({ start, end, max }, index) => (
+        .filter(({ max, start }) => max && start > -1)
+        .map(({ start, end, max, count }) => (
           <div 
-            key={index}
-            className={`todo absolute h-5 bg-[#653c2b] rounded-sm ${activeId === id ? 'bg-[#ff7d44]' : ''}`}
+            ref={ref}
+            key={count}
+            className={`todo absolute h-5 bg-[#653c2b] rounded-sm transition-all ease-in-out duration-500 ${activeId === id ? 'bg-[#ff7d44]' : ''}`}
             style={{
-              top: top + TodoStartTop + itemHeight * index + (max - 1) * TodoGap,
+              top: top + TodoStartTop + itemHeight * count + (max - 1) * TodoGap,
               left: start * itemWidth + 5,
               width: (end - start + 1) * itemWidth - 20,
             }}
-            onClick={() => handleActive(id)}
+            onClick={(e) => {
+              setPosition({ x: e.clientX, y: e.clientY });
+              handleActive(id);
+            }}
           >
-            {!index && <div className="absolute w-1 h-full rounded-l-sm bg-[#fe814a] cursor-col-resize" />}
-            <span className="todo flex h-full leading-2 text-white text-[10px] items-center pl-2 select-none">{title}</span>
+            {!count && <div className="absolute w-1 h-full rounded-l-sm bg-[#fe814a] cursor-col-resize" />}
+            <span className="todo flex h-full leading-2 text-white text-[10px] items-center pl-2 select-none cursor-pointer">{title}</span>
           </div>
         ))}
+      
+      <ContextMenu
+        className="z-10"
+        isShow={activeId === id}
+        position={position}
+        close={() => handleActive(-1)}
+      >
+        <ContextMenu.Item>
+          <button 
+            className="flex w-full items-center gap-4 font-semibold cursor-pointer"
+          >
+            <span className="block w-5 h-3 rounded-sm bg-blue-400" />수정
+          </button>
+        </ContextMenu.Item>
+        <ContextMenu.Item>
+          <button 
+            className="flex w-full items-center gap-4 font-semibold cursor-pointer"
+            onClick={() => {
+              if (confirm('정말 삭제하시겠습니까?')) {
+                deleteTodo(id);
+              }
+            }}
+          >
+            <span className="block w-5 h-3 rounded-sm bg-gray-400" />삭제
+          </button>
+        </ContextMenu.Item>
+      </ContextMenu>
     </>
   )
 };
@@ -111,7 +149,7 @@ interface TodosProps {
 }
 
 const Todos = ({ top = 0, itemWidth = 0, itemHeight = 0 }: TodosProps) => {
-  const cells = useRef([]);
+  const cells = useRef(Array(42).fill(0));
   const [activeId, setActiveId] = useState(-1);
   const [year, month] = useCalendarStore((state) => [
     state.year,
@@ -123,10 +161,18 @@ const Todos = ({ top = 0, itemWidth = 0, itemHeight = 0 }: TodosProps) => {
       return new Date(year, month, 1).getTime() <= getDate(endDate).getTime()
         && getDate(startDate).getTime() < new Date(year, month + 1, 1).getTime();
     })
-    .toSorted((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+    .toSorted((a, b) => {
+      const diff = new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+
+      if (!diff) {
+        return new Date(b.endDate).getTime() - new Date(a.endDate).getTime();
+      }
+
+      return diff;
+    });
 
   useEffect(() => {
-    cells.current = [];
+    cells.current = Array(42).fill(0);
   });
 
   useEffect(() => {
