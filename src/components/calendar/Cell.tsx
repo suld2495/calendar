@@ -1,6 +1,6 @@
 import { getToday } from "@/utils/date-utils";
 import React, { useContext } from "react";
-import { CalendarContext, CELL_VARIANTS, CellContext } from "./context";
+import { CELL_VARIANTS, CellContext } from "./context";
 
 
 interface CellProps {
@@ -18,8 +18,6 @@ const Cell = ({ date, active, current = true }: CellProps) => {
     onDragging, 
     onDragend 
   } = useContext(CellContext);
-  const { isDragging } = useContext(CalendarContext);
-
   const today = getToday();
   let color = '';
 

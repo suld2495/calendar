@@ -1,7 +1,7 @@
 import Calendar from "@/components/calendar/Calendar";
 import CalendarCell from "@/components/calendar/CalendarCell";
 import CalendarHeader from "./CalendarHeader";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface MiniCalendarProps {
   year?: number;
@@ -18,6 +18,7 @@ const MiniCalendar = ({
   position = { top: 0, left: 0 },
   close,
 }: MiniCalendarProps) => {
+  const ref = useRef(null);
   const [year, setYear] = useState(defaultYear);
   const [month, setMonth] = useState(defaultMonth);
 
@@ -51,6 +52,7 @@ const MiniCalendar = ({
           next={next} 
         />
         <Calendar
+          ref={ref}
           className="mini-calendar"
           year={year} 
           month={month}
