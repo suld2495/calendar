@@ -105,7 +105,7 @@ const Todo = ({
     <>
       {list
         .filter(({ max, start }) => max && start > -1)
-        .map(({ start, end, max, count }) => (
+        .map(({ start, end, max, count }, index) => (
           <div 
             ref={ref}
             key={count}
@@ -120,7 +120,7 @@ const Todo = ({
               handleActive(id);
             }}
           >
-            {!count && <div className="absolute w-1 h-full rounded-l-sm bg-[#fe814a] cursor-col-resize" />}
+            {!index && <div className="absolute w-1 h-full rounded-l-sm bg-[#fe814a] cursor-col-resize" />}
             <span className="todo flex h-full leading-2 text-white text-[10px] items-center pl-2 select-none cursor-pointer">{title}</span>
           </div>
         ))}

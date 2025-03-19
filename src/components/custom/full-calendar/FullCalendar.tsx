@@ -29,7 +29,7 @@ const FullCalendar = () => {
   useEffect(() => {
     if (!cellRef.current) return;
     setItem(cellRef.current.getBoundingClientRect());
-  }, []);
+  }, [cellRef, year, month]);
 
   const handleClick = () => {
     hideContextmenu();
